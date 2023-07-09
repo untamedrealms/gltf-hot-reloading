@@ -146,5 +146,10 @@ func apply_change_on_node(node : Node3D, new_scene : Node3D, index : int):
 	node.add_sibling(new_scene)
 	new_scene.script = node.script
 	new_scene.transform = node.transform
+	_carry_information(node, new_scene)
 	node.queue_free()
 	target_nodes[index] = new_scene
+	
+## Virtual; If more information should persist as the node is swapped, it should happen here.
+func _carry_information(node : Node3D, new_scene : Node3D):
+	pass
