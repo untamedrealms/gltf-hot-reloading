@@ -8,8 +8,8 @@ signal scene_reloaded
 
 ## The nodes to replace when the scene file changes.
 @export var target_nodes : Array[Node]
-## The path to the file to watch for.
-@export_global_file() var file : String
+## The file to watch for changes.
+@export_global_file('*.glb', '*.gltf') var file : String
 
 var _cooling_down : bool = false
 var _waiting_to_reload : bool = false
@@ -22,6 +22,13 @@ func _ready() -> void:
 	# Disable hot reload functionality on Release to free memory.
 	if (ProjectSettings.get_setting(&'editor_tools/hot_reload/enabled') or false) == false:
 		queue_free()
+		return
+	
+	if not target_nodes or target_nodes.size() == 0:
+		push_warning('No target nodes set for hot reloading.')
+
+	if !file:
+		push_warning('No file set to be watched for hot reloading.')
 		return
 
 	start_watching(
@@ -131,6 +138,11 @@ func _get_new_scene_gLTF() -> Node:
 
 ## Replaces the node with the newly loaded GLTF document.
 func apply_change_on_node(node : Node3D, new_scene : Node3D, index : int):
+	if not node:
+		push_warning('Target node for hot reloading is invalid. Check it.')
+		return
+	if not is_instance_valid(node) or node.is_queued_for_deletion():
+		(func():target_nodes.erase(node)).call_deferred()
 	node.add_sibling(new_scene)
 	new_scene.script = node.script
 	new_scene.transform = node.transform
