@@ -23,10 +23,10 @@ tonemap_mode = 2
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_8lgql")
 
-[node name="SceneReloader" type="Node" parent="." node_paths=PackedStringArray("target_nodes")]
+[node name="SceneReloader" type="Node" parent="."]
 script = ExtResource("2_1qk5d")
-target_nodes = [null]
 file = "C:/Users/carlo/OneDrive/Documentos/GLTF Reloader/TestBlenderImported.glb"
+target_node_paths = Array[NodePath]([NodePath("../TestBlenderImported")])
 
 [node name="TestBlenderImported" parent="." instance=ExtResource("1_n61e5")]
 script = ExtResource("2_i7yxu")

@@ -11,6 +11,11 @@ signal scene_reloaded
 ## The file to watch for changes.
 @export_global_file('*.glb', '*.gltf') var file : String
 
+@export_category('Patch Corrections')
+## ! Godot 4.1 has a bug where exported nodes will lose their reference
+## if they point to an inherited scene that was reimported on disk.
+@export var target_node_paths : Array[NodePath] = []
+
 var _cooling_down : bool = false
 var _waiting_to_reload : bool = false
 
@@ -23,7 +28,10 @@ func _ready() -> void:
 	if (ProjectSettings.get_setting(&'editor_tools/hot_reload/enabled') or false) == false:
 		queue_free()
 		return
-	
+
+	if target_node_paths.size() > 0:
+		target_nodes.assign(target_node_paths.map(func(n_path): return get_node(n_path)))
+
 	if not target_nodes or target_nodes.size() == 0:
 		push_warning('No target nodes set for hot reloading.')
 
