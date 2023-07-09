@@ -7,7 +7,7 @@ signal scene_changed_on_disk
 signal scene_reloaded
 
 ## The nodes to replace when the scene file changes.
-@export var target_nodes : Array[Node]
+@export var target_nodes : Array[Node] = []
 ## The file to watch for changes.
 @export_global_file('*.glb', '*.gltf') var file : String
 
@@ -103,9 +103,8 @@ func reload() -> void:
 
 	var new_scene = _get_new_scene()
 
-	
 	for index in target_nodes.size():
-		apply_change_on_node(target_nodes[index], new_scene, index)
+		apply_change_on_node(target_nodes[index], new_scene.duplicate(), index)
 	
 	## Cool down to avoid reloading a resource too much.
 	## TODO: Decide whether to have special cooldowns or not.
@@ -143,12 +142,22 @@ func apply_change_on_node(node : Node3D, new_scene : Node3D, index : int):
 		return
 	if not is_instance_valid(node) or node.is_queued_for_deletion():
 		(func():target_nodes.erase(node)).call_deferred()
-	node.add_sibling(new_scene)
-	new_scene.script = node.script
-	new_scene.transform = node.transform
 	_carry_information(node, new_scene)
-	node.queue_free()
+	new_scene.set_script(node.get_script())
+	new_scene.set_process(node.process_mode)
+	var node_name = node.name
+	var display_folded = node.is_displayed_folded()
+	(func():
+		await get_tree().process_frame
+		new_scene.name = node_name
+		new_scene.set_display_folded(display_folded)
+	).call_deferred()
+	for i in node.get_children():
+		i.queue_free()
+	node.replace_by(new_scene, true)
+	new_scene.transform = node.transform
 	target_nodes[index] = new_scene
+	node.queue_free()
 	
 ## Virtual; If more information should persist as the node is swapped, it should happen here.
 func _carry_information(node : Node3D, new_scene : Node3D):

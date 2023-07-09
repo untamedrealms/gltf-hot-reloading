@@ -1,16 +1,38 @@
-[gd_scene load_steps=3 format=3 uid="uid://d2xi6i8btxkt7"]
+[gd_scene load_steps=7 format=3 uid="uid://d2xi6i8btxkt7"]
 
 [ext_resource type="PackedScene" uid="uid://2hsyb7pr4jsa" path="res://TestBlenderImported.glb" id="1_n61e5"]
 [ext_resource type="Script" path="res://addons/gltf_hot_reloader/SceneReloader.gd" id="2_1qk5d"]
+[ext_resource type="Script" path="res://TestBlenderImported.gd" id="2_i7yxu"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6sxxy"]
+sky_top_color = Color(0.137255, 0.486275, 0.639216, 1)
+sky_horizon_color = Color(0.557843, 0.658823, 0.753922, 1)
+ground_bottom_color = Color(0.0941176, 0.14902, 0.376471, 1)
+ground_horizon_color = Color(0.557843, 0.658823, 0.753922, 1)
+
+[sub_resource type="Sky" id="Sky_26t66"]
+sky_material = SubResource("ProceduralSkyMaterial_6sxxy")
+
+[sub_resource type="Environment" id="Environment_8lgql"]
+background_mode = 2
+sky = SubResource("Sky_26t66")
+tonemap_mode = 2
 
 [node name="Tester" type="Node3D"]
 
-[node name="TestBlenderImported" parent="." instance=ExtResource("1_n61e5")]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_8lgql")
 
 [node name="SceneReloader" type="Node" parent="." node_paths=PackedStringArray("target_nodes")]
 script = ExtResource("2_1qk5d")
-target_nodes = [NodePath("../TestBlenderImported")]
+target_nodes = [null]
 file = "C:/Users/carlo/OneDrive/Documentos/GLTF Reloader/TestBlenderImported.glb"
+
+[node name="TestBlenderImported" parent="." instance=ExtResource("1_n61e5")]
+script = ExtResource("2_i7yxu")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.8814)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.61549, -0.364015, 0.699046, -0.285924, 0.723398, 0.628444, -0.734452, -0.586675, 0.341164, 0, 0, 5.02609)
