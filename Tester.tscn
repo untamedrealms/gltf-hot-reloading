@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2xi6i8btxkt7"]
+
+[ext_resource type="PackedScene" uid="uid://2hsyb7pr4jsa" path="res://TestBlenderImported.glb" id="1_n61e5"]
+[ext_resource type="Script" path="res://addons/gltf_hot_reloader/SceneReloader.gd" id="2_1qk5d"]
+
+[node name="Tester" type="Node3D"]
+
+[node name="TestBlenderImported" parent="." instance=ExtResource("1_n61e5")]
+
+[node name="SceneReloader" type="Node" parent="." node_paths=PackedStringArray("target_nodes")]
+script = ExtResource("2_1qk5d")
+target_nodes = [null]
+file = "C:/Users/carlo/OneDrive/Documentos/GLTF Reloader/TestBlenderImported.glb"
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.8814)
